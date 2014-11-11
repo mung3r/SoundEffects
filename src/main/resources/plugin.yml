@@ -1,0 +1,13 @@
+name: SoundEffects
+main: com.bighatchet.soundeffects.SoundEffects
+version: ${project.version}-b${BUILD_NUMBER}
+authors: [mung3r]
+
+commands:
+  sound:
+    description: ecoCreature commands
+    usage: |
+           Usage:
+           /<command> list [page] - list sound names
+           /<command> play <sound_name> <volume> <pitch> - play a sound
+permissions:
