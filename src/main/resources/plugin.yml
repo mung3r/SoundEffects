@@ -9,7 +9,7 @@ commands:
     usage: |
            Usage:
            /<command> list [page] - list sound names
-           /<command> play <sound_name> [volume] [pitch] - play a sound
+           /<command> play <sound_name> [volume] [pitch] [count] [interval] - play a sound
 permissions:
   soundeffects.command.*:
     description: Allows all commands

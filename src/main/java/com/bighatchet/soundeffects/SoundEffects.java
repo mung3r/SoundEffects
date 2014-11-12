@@ -6,12 +6,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.google.common.collect.Lists;
 
@@ -39,7 +41,7 @@ public class SoundEffects extends JavaPlugin
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
         if (sender instanceof Player && "sound".equals(command.getName())) {
-            Player player = (Player) sender;
+            final Player player = (Player) sender;
 
             if (args.length > 0) {
                 switch (args[0]) {
@@ -64,14 +66,28 @@ public class SoundEffects extends JavaPlugin
                     }
                     break;
                 case "play":
-                    Sound sound = null;
-                    float pitch;
-                    float volume;
                     try {
-                        sound = Sound.valueOf(args[1].toUpperCase());
-                        volume = args.length > 2 ? Float.valueOf(args[2]) : 1.0F;
-                        pitch = args.length > 3 ? Float.valueOf(args[3]) : 1.0F;
-                        player.getWorld().playSound(player.getLocation(), sound, volume, pitch);
+                        final Sound sound = Sound.valueOf(args[1].toUpperCase());
+                        final float volume = args.length > 2 ? Float.valueOf(args[2]) : 1.0F;
+                        final float pitch = args.length > 3 ? Float.valueOf(args[3]) : 1.0F;
+                        final int count = args.length > 4 ? Integer.valueOf(args[4]) : 1;
+                        final int interval = args.length > 5 ? Integer.valueOf(args[5]) : 10;
+                        final BukkitTask task = Bukkit.getScheduler().runTaskTimer(this, new Runnable() {
+
+                            @Override
+                            public void run()
+                            {
+                                player.getWorld().playSound(player.getLocation(), sound, volume, pitch);
+                            }
+                        }, 0, interval);
+                        Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+
+                            @Override
+                            public void run()
+                            {
+                                task.cancel();
+                            }
+                        }, count * interval);
                     }
                     catch (Exception e) {
                         player.sendMessage(ChatColor.GRAY + "Invalid play arguments. Type /sound help for play command syntax.");
@@ -81,7 +97,7 @@ public class SoundEffects extends JavaPlugin
                 default:
                     player.sendMessage(ChatColor.GRAY + "Usage");
                     player.sendMessage(ChatColor.GRAY + "/<command> list [page] - list sound names");
-                    player.sendMessage(ChatColor.GRAY + "/<command> play <sound_name> [volume] [pitch] - play a sound");
+                    player.sendMessage(ChatColor.GRAY + "/<command> play <sound_name> [volume] [pitch] [count] [interval] - play a sound");
                 }
             }
         }
