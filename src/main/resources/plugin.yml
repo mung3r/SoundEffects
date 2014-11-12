@@ -5,9 +5,20 @@ authors: [mung3r]
 
 commands:
   sound:
-    description: ecoCreature commands
+    description: SoundEffect commands
     usage: |
            Usage:
            /<command> list [page] - list sound names
-           /<command> play <sound_name> <volume> <pitch> - play a sound
+           /<command> play <sound_name> [volume] [pitch] - play a sound
 permissions:
+  soundeffects.command.*:
+    description: Allows all commands
+    children:
+      soundeffects.command.list: true
+      soundeffects.command.play: true
+  soundeffects.command.list:
+    description: List available sounds
+    default: op
+  soundeffects.command.play:
+    description: Play a sound
+    default: op
